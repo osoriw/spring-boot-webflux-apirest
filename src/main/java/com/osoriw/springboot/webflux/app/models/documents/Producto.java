@@ -91,4 +91,12 @@ public class Producto {
 		this.foto = foto;
 	}
 
+	@Override
+	public String toString() {
+		return "Producto [id=" + id + ", nombre=" + nombre + ", precio=" + precio + ", createAt=" + createAt
+				+ ", categoria=" + categoria + ", foto=" + foto + "]";
+	}
+	
+	
+
 }
