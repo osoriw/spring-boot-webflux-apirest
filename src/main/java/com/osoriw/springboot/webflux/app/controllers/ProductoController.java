@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
@@ -48,7 +49,7 @@ public class ProductoController {
 	}
 
 	/**
-	 * Crear un nuevo producto.
+	 * Crear un nuevo producto (devolver json del producto creado en el body de la respuesta y header location del nuevo recurso creado).
 	 */
 	@PostMapping
 	public Mono<ResponseEntity<Producto>> save(@RequestBody Producto producto) {
@@ -59,6 +60,23 @@ public class ProductoController {
 				.contentType(MediaType.APPLICATION_JSON).body(p));
 
 	}
+	
+	/**
+	 * Crear un nuevo producto (devolver HttpStatus.CREATED y header location, en la respuesta).
+	 */
+	/*@PostMapping
+	public Mono<ResponseEntity<Void>> save(@RequestBody Producto producto) {
+
+		producto.setCreateAt(new Date());
+		return service.save(producto).map(p -> {
+			URI location = URI.create("/api/productos/".concat(producto.getId()));
+			HttpHeaders headers = new HttpHeaders();
+			headers.setLocation(location);
+			return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
+		});
+
+	}*/
+	
 
 	/**
 	 * Actualizar un producto.
