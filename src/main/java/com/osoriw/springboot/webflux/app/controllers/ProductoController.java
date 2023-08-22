@@ -2,6 +2,8 @@ package com.osoriw.springboot.webflux.app.controllers;
 
 import java.net.URI;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,10 +17,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.support.WebExchangeBindException;
 
 import com.osoriw.springboot.webflux.app.models.documents.Producto;
 import com.osoriw.springboot.webflux.app.models.services.ProductoService;
 
+import jakarta.validation.Valid;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -46,10 +50,49 @@ public class ProductoController {
 				.defaultIfEmpty(ResponseEntity.notFound().build());
 	}
 
+	/*
+	 * Crear un nuevo producto (valida que todos los campos mandatorios, se
+	 * especifiquen en el request)
+	 */
+	@PostMapping
+	public Mono<ResponseEntity<Map<String, Object>>> save(@Valid @RequestBody Mono<Producto> monoProducto) {
+
+		Map<String, Object> respuesta = new HashMap<>();
+
+		return monoProducto.flatMap(producto -> {
+			producto.setCreateAt(new Date());
+
+			return service.save(producto).map(p -> {
+				respuesta.put("producto", p);
+				respuesta.put("mensaje", "Producto creado con éxito");
+				respuesta.put("timestamp", new Date());
+				respuesta.put("status", HttpStatus.OK.value());
+
+				return ResponseEntity.created(URI.create("/api/productos/".concat(p.getId())))
+						.contentType(MediaType.APPLICATION_JSON).body(respuesta);
+			});
+		})
+		.onErrorResume(t -> { // capturar cualquier error durante la validación del request de creación de producto
+			return Mono.just(t).cast(WebExchangeBindException.class) // transformar los exepciones de tipo genérico al tipo específico WebExchangeBindException.class 
+					.flatMap(e -> Mono.just(e.getFieldErrors())) // crear un observable del tipo  Mono<List<FieldError>> 
+					.flatMapMany(Flux::fromIterable) // crear un observable del tipo Flux<FieldError>
+					.map(fieldError -> "El campo " + fieldError.getField() + " " + fieldError.getDefaultMessage()) //mapear cada FieldError a un string con los datos relevantes
+					.collectList() // crear un observable del tipo Mono<List<String>> 
+					.flatMap(list -> { // transformar de Mono<List<String>> a  Mono<ResponseEntity<Map<String, Object>>> 
+						respuesta.put("errors", list);
+						respuesta.put("timestamp", new Date());
+						respuesta.put("status", HttpStatus.BAD_REQUEST.value());
+
+						return Mono.just(ResponseEntity.badRequest().body(respuesta));
+					});
+		});
+
+	}
+	
 	/**
 	 * Crear un nuevo producto (devolver json del producto creado en el body de la respuesta y header location del nuevo recurso creado).
 	 */
-	@PostMapping
+	/*@PostMapping
 	public Mono<ResponseEntity<Producto>> save(@RequestBody Producto producto) {
 
 		producto.setCreateAt(new Date());
@@ -57,7 +100,7 @@ public class ProductoController {
 		return service.save(producto).map(p -> ResponseEntity.created(URI.create("/api/productos/".concat(p.getId())))
 				.contentType(MediaType.APPLICATION_JSON).body(p));
 
-	}
+	}*/
 	
 	/**
 	 * Crear un nuevo producto (devolver HttpStatus.CREATED y header location, en la respuesta).
