@@ -22,9 +22,9 @@ public class RouterFunctionConfig {
     @Bean
     public RouterFunction<ServerResponse> routes(ProductoHandler handler) {
         return RouterFunctions.route(
-                // declarando 2 rutas con versiones diferentes para el mismo endpoint
-                RequestPredicates.GET("/api/v2/productos").or(RequestPredicates.GET("/api/v3/productos")), handler::findAll);
-
+                        // declarando 2 rutas con versiones diferentes para el mismo endpoint
+                        RequestPredicates.GET("/api/v2/productos").or(RequestPredicates.GET("/api/v3/productos")), handler::findAll)
+                .andRoute(RequestPredicates.GET("/api/v2/productos/{id}"), handler::findById);
     }
 
 }
