@@ -31,7 +31,7 @@ public class ProductoHandler {
         return service.findById(id).flatMap(p -> ServerResponse
                 .ok()
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(Mono.just(p), Producto.class));
+                .body(Mono.just(p), Producto.class)); // el producto p, por ser un objeto no reactivo, se debe envolver en un Mono
                 //.body(BodyInserters.fromValue(p))); // opcional si se quiere usar el método BodyInserters.fromValue(...)
 
     }
