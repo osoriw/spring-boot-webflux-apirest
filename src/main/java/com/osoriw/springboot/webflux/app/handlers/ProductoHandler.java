@@ -5,7 +5,6 @@ import com.osoriw.springboot.webflux.app.models.services.ProductoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
@@ -29,10 +28,11 @@ public class ProductoHandler {
         String id = request.pathVariable("id");
 
         return service.findById(id).flatMap(p -> ServerResponse
-                .ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(Mono.just(p), Producto.class)); // el producto p, por ser un objeto no reactivo, se debe envolver en un Mono
-                //.body(BodyInserters.fromValue(p))); // opcional si se quiere usar el método BodyInserters.fromValue(...)
+                        .ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(Mono.just(p), Producto.class)) // el producto p, por ser un objeto no reactivo, se debe envolver en un Mono
+                      //.body(BodyInserters.fromValue(p))); // opcional si se quiere usar el método BodyInserters.fromValue(...)
+                        .switchIfEmpty(ServerResponse.notFound().build());
 
     }
 
