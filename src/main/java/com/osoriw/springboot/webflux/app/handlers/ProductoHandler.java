@@ -55,6 +55,7 @@ public class ProductoHandler {
                                     .created(URI.create("/api/v2/productos/".concat(producto.getId())))
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .body(BodyInserters.fromValue(producto));
+                                    //.body(Mono.just(producto), Producto.class); // opcional para crear un nuevo mono<Producto>, dentto del body
                         }
                 );
 
