@@ -24,7 +24,9 @@ public class RouterFunctionConfig {
         return RouterFunctions.route(
                         // declarando 2 rutas con versiones diferentes para el mismo endpoint
                         RequestPredicates.GET("/api/v2/productos").or(RequestPredicates.GET("/api/v3/productos")), handler::findAll)
-                .andRoute(RequestPredicates.GET("/api/v2/productos/{id}"), handler::findById);
+                .andRoute(RequestPredicates.GET("/api/v2/productos/{id}"), handler::findById)
+                .andRoute(RequestPredicates.POST("/api/v2/productos"), handler::save);
+
     }
 
 }
