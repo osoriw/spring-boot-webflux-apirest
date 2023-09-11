@@ -14,7 +14,7 @@ class SpringBootWebfluxApirestApplicationTests {
     private WebTestClient client;
 
     @Test
-    void testEndpointGetProductos() {
+    void findAllProductosTest() {
         client.get()
                 .uri("/api/v2/productos")
                 .accept(MediaType.APPLICATION_JSON)
