@@ -21,7 +21,7 @@ public class ProductoHandler {
 
     /**
      * Retorna todos los productos.
-     * */
+     */
     public Mono<ServerResponse> findAll(ServerRequest request) {
         return ServerResponse
                 .ok()
@@ -32,7 +32,7 @@ public class ProductoHandler {
 
     /**
      * Retorna un producto por su id
-     * */
+     */
     public Mono<ServerResponse> findById(ServerRequest request) {
         //obtenemos el path variable id, directamente del request
         String id = request.pathVariable("id");
@@ -48,7 +48,7 @@ public class ProductoHandler {
 
     /**
      * Guarda un nuevo producto en base de datos.
-     * */
+     */
     public Mono<ServerResponse> save(ServerRequest request) {
         Mono<Producto> productoMono = request.bodyToMono(Producto.class);
 
@@ -119,5 +119,18 @@ public class ProductoHandler {
 
     }
 
+    /**
+     * Elimina un producto existente en la base de datos.
+     */
+    public Mono<ServerResponse> delete(ServerRequest request) {
+        String id = request.pathVariable("id");
+
+        return service.findById(id)
+                .flatMap(producto -> {
+                    return service.delete(producto).then(ServerResponse.noContent().build());
+                })
+                .switchIfEmpty(ServerResponse.notFound().build());
+
+    }
 
 }

@@ -27,7 +27,8 @@ public class RouterFunctionConfig {
                         RequestPredicates.GET("/api/v2/productos").or(RequestPredicates.GET("/api/v3/productos")), handler::findAll)
                 .andRoute(RequestPredicates.GET("/api/v2/productos/{id}"), handler::findById)
                 .andRoute(RequestPredicates.POST("/api/v2/productos"), handler::save)
-                .andRoute(RequestPredicates.PUT("/api/v2/productos/{id}"), handler::update);
+                .andRoute(RequestPredicates.PUT("/api/v2/productos/{id}"), handler::update)
+                .andRoute(RequestPredicates.DELETE("/api/v2/productos/{id}"), handler::delete);
 
     }
 
