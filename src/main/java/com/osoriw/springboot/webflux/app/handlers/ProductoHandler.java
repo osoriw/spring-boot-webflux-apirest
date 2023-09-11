@@ -105,7 +105,8 @@ public class ProductoHandler {
                     return ServerResponse.created(URI.create("/api/v2/productos/".concat(producto.getId())))
                             .contentType(MediaType.APPLICATION_JSON)
                             .body(service.save(producto), Producto.class);
-                });
+                })
+                .switchIfEmpty(ServerResponse.notFound().build());
 
     }
 
