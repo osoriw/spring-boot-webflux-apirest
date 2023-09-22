@@ -41,6 +41,9 @@ class SpringBootWebfluxApirestApplicationTests {
     @Test
     void testGetProducto() {
         Producto producto = productoService.findByNombre("Sony Notebook").block(); // se usa block porque las pruebas unitarias deben ser síncronas
+
+        //validar que el producto no sea nulo,antes de continuar con las validaciones restantes.
+        Assertions.assertNotNull(producto);
         client.get()
                 .uri("/api/v2/productos/{id}", Collections.singletonMap("id", producto.getId()))
                 .accept(MediaType.APPLICATION_JSON)
