@@ -47,9 +47,17 @@ class SpringBootWebfluxApirestApplicationTests {
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON)
-                .expectBody()
+                .expectBody(Producto.class)
+                .consumeWith(response -> {
+                    Producto p = response.getResponseBody();
+
+                    Assertions.assertNotNull(p);
+                    Assertions.assertFalse(p.getId().isEmpty());
+                    Assertions.assertEquals(p.getNombre(), "Sony Notebook");
+                });
+                /*.expectBody()
                 .jsonPath("$.id").isNotEmpty()
-                .jsonPath("$.nombre").isEqualTo("Sony Notebook");
+                .jsonPath("$.nombre").isEqualTo("Sony Notebook");*/
 
     }
 
